@@ -1,0 +1,11 @@
+# Build klasörleri
+bin/
+obj/
+
+# Yerel ayarlar ve json verileri (Senin istediğin kritik ayar)
+*.json
+
+# Visual Studio kullanıcı dosyaları
+*.suo
+*.user
+.vs/

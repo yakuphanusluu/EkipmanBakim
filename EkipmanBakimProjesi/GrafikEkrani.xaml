@@ -1,0 +1,52 @@
+﻿<Window x:Class="EkipmanBakimProjesi.GrafikEkrani"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        Title="Çalışma Saati Grafiği" Height="550" Width="900" WindowStartupLocation="CenterScreen" Background="#FFF5F5F5">
+
+    <Window.Resources>
+        <DataTemplate x:Key="ModernEtiket">
+            <Border x:Name="ArkaPlan" Background="Green" CornerRadius="5" Padding="7,3" Margin="0,-40,0,0"
+                    BorderBrush="#ECF0F1" BorderThickness="1">
+                <TextBlock Text="{Binding FormattedText}" Foreground="White" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center"/>
+            </Border>
+
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding FormattedText}" Value="">
+                    <Setter TargetName="ArkaPlan" Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock x:Name="TxtBaslik" Grid.Row="0" Text="Ekipman No: " FontSize="22" FontWeight="Bold" Foreground="#333" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+        <lvc:CartesianChart x:Name="Chart" Pan="None" DisableAnimations="True" Hoverable="True" Margin="0,0,0,10" Grid.Row="1" BorderBrush="#B0B0B0" BorderThickness="2" ClipToBounds="True">
+            <lvc:CartesianChart.AxisY>
+                <lvc:Axis x:Name="AxisY" MinValue="0" MaxValue="28" FontSize="20" FontWeight="Bold" Foreground="#444">
+                    <lvc:Axis.Separator>
+                        <lvc:Separator Step="6" StrokeThickness="1" Stroke="#E0E0E0" />
+                    </lvc:Axis.Separator>
+                </lvc:Axis>
+            </lvc:CartesianChart.AxisY>
+
+            <lvc:CartesianChart.AxisX>
+                <lvc:Axis x:Name="AxisX" FontSize="18" FontWeight="Bold" Foreground="#444" MinValue="0">
+                    <lvc:Axis.Separator>
+                        <lvc:Separator Stroke="#D0D0D0" StrokeThickness="1" StrokeDashArray="2" Step="1" />
+                    </lvc:Axis.Separator>
+                </lvc:Axis>
+            </lvc:CartesianChart.AxisX>
+        </lvc:CartesianChart>
+
+        <ScrollBar Grid.Row="2" x:Name="HScroll" Orientation="Horizontal" Height="20" Margin="0,0,0,5" 
+                   ValueChanged="HScroll_ValueChanged"/>
+    </Grid>
+</Window>

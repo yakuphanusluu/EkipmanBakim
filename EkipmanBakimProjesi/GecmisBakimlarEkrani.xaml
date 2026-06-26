@@ -1,0 +1,95 @@
+﻿<Window x:Class="EkipmanBakimProjesi.GecmisBakimlarEkrani"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Geçmiş Bakımlar" Height="550" Width="800" WindowStartupLocation="CenterScreen" Background="#FFF5F5F5">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Geçmiş Bakım Kayıtları" FontSize="22" FontWeight="Bold" Foreground="#2C3E50" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+        <Border Grid.Row="1" Background="White" BorderBrush="#D0D3D4" BorderThickness="1" CornerRadius="8" Padding="15" Margin="0,0,0,15">
+            <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+
+                <StackPanel Margin="0,0,15,10">
+                    <TextBlock Text="Ekipman Numarası" FontWeight="Bold" Foreground="#555" Margin="0,0,0,5"/>
+                    <ComboBox x:Name="CmbEkipman" Width="150" Height="30" FontSize="14" SelectionChanged="Filtre_Changed"/>
+                </StackPanel>
+
+                <StackPanel Margin="0,0,15,10">
+                    <TextBlock Text="Bakımı Yapan Kişi" FontWeight="Bold" Foreground="#555" Margin="0,0,0,5"/>
+                    <ComboBox x:Name="CmbKisi" Width="150" Height="30" FontSize="14" SelectionChanged="Filtre_Changed"/>
+                </StackPanel>
+
+                <StackPanel Margin="0,0,15,10">
+                    <TextBlock Text="Başlangıç Tarihi" FontWeight="Bold" Foreground="#555" Margin="0,0,0,5"/>
+                    <DatePicker x:Name="DpBaslangic" Width="130" Height="30" SelectedDateChanged="Filtre_Changed"/>
+                </StackPanel>
+
+                <StackPanel Margin="0,0,15,10">
+                    <TextBlock Text="Bitiş Tarihi" FontWeight="Bold" Foreground="#555" Margin="0,0,0,5"/>
+                    <DatePicker x:Name="DpBitis" Width="130" Height="30" SelectedDateChanged="Filtre_Changed"/>
+                </StackPanel>
+
+                <Button Content="Temizle" Width="80" Height="30" Background="#E74C3C" Foreground="White" FontWeight="Bold" Margin="0,15,0,0" Click="BtnTemizle_Click"/>
+            </WrapPanel>
+        </Border>
+
+        <Grid Grid.Row="2">
+        <DataGrid x:Name="DgGecmisBakimlar" AutoGenerateColumns="False" IsReadOnly="True" 
+                      Background="White" RowHeight="35" FontSize="14" AlternatingRowBackground="#F9F9F9" HeadersVisibility="Column">
+                <DataGrid.Columns>
+                <DataGridTextColumn Header="Ekipman Numarası" Binding="{Binding EkipmanNo}" Width="150" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Son Bakım Tarihi" Binding="{Binding BakimTarihi, StringFormat=dd.MM.yyyy}" Width="150"/>
+                <DataGridTextColumn Header="Bakımı Yapan Kişi" Binding="{Binding BakimYapanKisi}" Width="*"/>
+                <DataGridTextColumn Header="Bakım Periyodu" Binding="{Binding BakimPeriyodu}" Width="150"/>
+
+                    <DataGridTemplateColumn Header="Bakım Detayı" Width="130">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Bakım Detayı" Background="#3498DB" Foreground="White" FontWeight="Bold" Cursor="Hand" Padding="5,2" Click="BtnDetay_Click">
+                                    <Button.Resources>
+                                        <Style TargetType="Border">
+                                            <Setter Property="CornerRadius" Value="4"/>
+                                        </Style>
+                                    </Button.Resources>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                </DataGrid.Columns>
+        </DataGrid>
+
+            <TextBlock x:Name="TxtUyari" Text="Bu ekipmana ait geçmiş bakım kaydı bulunamadı." 
+                       FontSize="18" FontWeight="Bold" Foreground="#E74C3C" 
+                       HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+    </Grid>
+
+        <!-- EXCEL VE PDF BUTONLARI -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+            <Button x:Name="BtnExcel" Content="Excel'e Aktar" Width="130" Height="40" Margin="0,0,15,0" 
+                    Background="#27AE60" Foreground="White" FontWeight="Bold" Cursor="Hand" Click="BtnExcel_Click">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+
+            <Button x:Name="BtnPdf" Content="PDF Çıkart" Width="130" Height="40" 
+                    Background="#E74C3C" Foreground="White" FontWeight="Bold" Cursor="Hand" Click="BtnPdf_Click">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+        </StackPanel>
+
+    </Grid>
+</Window>

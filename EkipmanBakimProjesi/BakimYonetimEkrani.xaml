@@ -1,0 +1,96 @@
+﻿<Window x:Class="EkipmanBakimProjesi.BakimYonetimEkrani"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Bakım Yönetimi" Height="750" Width="480" WindowStartupLocation="CenterScreen" Background="#FFF5F5F5">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="Ekipman Bakım Yönetimi" FontSize="20" FontWeight="Bold" Foreground="#333" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+            <TextBlock Grid.Row="1" Text="Bakımı Yapan Kişi:" FontWeight="Bold" Foreground="#555" Margin="0,0,0,5"/>
+            <TextBox Grid.Row="2" x:Name="TxtBakimYapan" Height="30" FontSize="14" Padding="5" Margin="0,0,0,15"/>
+
+            <Grid Grid.Row="3" Margin="0,0,0,15">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Bakım Yapılma Tarihi:" FontWeight="Bold" Foreground="#555" Margin="0,0,0,5"/>
+                    <DatePicker x:Name="DpBaslangic" Height="30" SelectedDateChanged="DpBaslangic_SelectedDateChanged"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="Bakım Periyodu (Saat):" FontWeight="Bold" Foreground="#555" Margin="0,0,0,5"/>
+                    <TextBox x:Name="TxtHedefSaat" Height="30" FontSize="14" Padding="5" TextChanged="TxtHedefSaat_TextChanged"/>
+                    <Button x:Name="BtnPeriyotKaydet" Content="Bu Periyodu Kaydet" Height="25" Margin="0,5,0,0" 
+                            Background="#95A5A6" Foreground="White" Click="BtnPeriyotKaydet_Click" FontSize="11"/>
+                </StackPanel>
+            </Grid>
+
+            <StackPanel Grid.Row="4" Margin="0,0,0,15">
+                <TextBlock Text="Bakım Detayı:" FontWeight="Bold" Foreground="#555" Margin="0,0,0,5"/>
+                <TextBox x:Name="TxtAciklama" Height="60" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Padding="5" FontSize="14"/>
+            </StackPanel>
+
+            <Border Grid.Row="5" Background="#E8F8F5" BorderBrush="#1ABC9C" BorderThickness="2" CornerRadius="8" Padding="15" Margin="0,10,0,15">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock x:Name="TxtKalanSureBaslik" Text="Bakıma Kalan Süre" FontSize="14" Foreground="#16A085" HorizontalAlignment="Center"/>
+                    <TextBlock x:Name="TxtKalanSure" Text="Lütfen Bakım Periyodu Girin" FontSize="22" FontWeight="Bold" Foreground="#1ABC9C" HorizontalAlignment="Center" Margin="0,5,0,0"/>
+                    <TextBlock x:Name="TxtDetay" FontSize="12" Foreground="#7F8C8D" HorizontalAlignment="Center" Margin="0,5,0,0" FontStyle="Italic"/>
+                    <TextBlock x:Name="TxtTahmini" Text="Tahmini Bakım: Veri Bekleniyor..." FontSize="13" Foreground="#8E44AD" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Row="6" x:Name="BrdSonAciklama" Background="#FFF9C4" BorderBrush="#F1C40F" BorderThickness="1" CornerRadius="5" Padding="10" Margin="0,0,0,15" Visibility="Collapsed">
+                <StackPanel>
+                    <TextBlock Text="Bakım Detayı:" FontWeight="Bold" Foreground="#D35400" FontSize="12"/>
+                    <TextBlock x:Name="TxtSonAciklamaGoster" Text="..." Foreground="#555" TextWrapping="Wrap" FontSize="13" Margin="0,3,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <Grid Grid.Row="7" Margin="0,0,0,15">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Content="Kaydet" Background="#3498DB" Foreground="White" FontWeight="Bold" FontSize="14" Height="40" Click="BtnKaydet_Click" Grid.ColumnSpan="3">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="6"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+            </Grid>
+
+            <TextBlock Grid.Row="8" Text="Geçmiş Bakım Kayıtları" FontWeight="Bold" Foreground="#555" Margin="0,0,0,5"/>
+            <DataGrid Grid.Row="9" x:Name="DgBakimGecmisi" AutoGenerateColumns="False" IsReadOnly="True" MinHeight="150">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Tarih" Binding="{Binding BakimTarihi, StringFormat=dd.MM.yyyy}" Width="80" CanUserSort="False"/>
+                    <DataGridTextColumn Header="Bakımı Yapan" Binding="{Binding BakimYapanKisi}" Width="100"/>
+                    <DataGridTextColumn Header="Açıklama" Binding="{Binding Aciklama}" Width="*"/>
+                    <DataGridTextColumn Header="Periyot" Binding="{Binding BakimPeriyodu}" Width="60"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+    </ScrollViewer>
+</Window>
