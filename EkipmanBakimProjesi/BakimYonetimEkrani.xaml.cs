@@ -170,6 +170,8 @@ namespace EkipmanBakimProjesi
             TxtTahmini.Text = $"Tahmini Bakım: {tahminiAyYil}";
             TahminiTarih = tahminiAyYil;
 
+            TxtDetay.Text += "\n" + OrtalamaBakimSuresiHesapla();
+
             KalanSure = TxtKalanSure.Text;
             SureRengi = TxtKalanSure.Foreground;
         }
@@ -218,9 +220,6 @@ namespace EkipmanBakimProjesi
             FormuTemizle();
             HesaplaVeGuncelle();
             MessageBox.Show("Başarıyla kaydedildi.");
-
-            // YENİ EKLENEN: Bakım kaydedildikten sonra pencereyi kapat, ana ekran verileri güncellesin
-            this.Close();
         }
 
         private void TxtHedefSaat_TextChanged(object sender, TextChangedEventArgs e) => HesaplaVeGuncelle();
@@ -233,6 +232,45 @@ namespace EkipmanBakimProjesi
                 File.WriteAllText(ayarDosyasi, JsonSerializer.Serialize(new { SabitPeriyot = hedef }));
                 MessageBox.Show("Periyot sabitlendi!");
             }
+        }
+
+        private string OrtalamaBakimSuresiHesapla()
+        {
+            // Yeterli kayıt yoksa (en az 2 kayıt lazım ki 1 aralık bulalım)
+            if (_bakimListesi == null || _bakimListesi.Count < 2)
+            {
+                return "Ortalama için en az 2 bakım kaydı gerekiyor.";
+            }
+
+            // Listeyi tarihe göre en yeniden en eskiye sıralayalım
+            var siraliBakimlar = _bakimListesi.OrderByDescending(x => x.BakimTarihi).ToList();
+
+            // En fazla SON 5 KAYDI alıyoruz
+            int alinacakKayitSayisi = Math.Min(siraliBakimlar.Count, 5);
+            var secilenBakimlar = siraliBakimlar.Take(alinacakKayitSayisi).ToList();
+
+            List<double> aralikSaatleri = new List<double>();
+
+            // Her bir bakım ile bir önceki (daha eski) bakım arasındaki ÇALIŞMA SAATİNİ bul
+            for (int i = 0; i < secilenBakimlar.Count - 1; i++)
+            {
+                DateTime yeniTarih = secilenBakimlar[i].BakimTarihi;
+                DateTime eskiTarih = secilenBakimlar[i + 1].BakimTarihi;
+
+                // Veritabanından bu iki tarih arasındaki kayıtları çek (eskiTarih'ten yeniTarih'e kadar)
+                var ikiBakimArasiKayitlar = _dbErisimi.KayitlariFiltrele(EkipmanNo, eskiTarih, yeniTarih);
+
+                // O aralıktaki toplam çalışma saatini hesapla
+                double aralikToplamSaati = ikiBakimArasiKayitlar.Sum(k => k.WorkingHours ?? 0);
+
+                // Listeye ekle
+                aralikSaatleri.Add(aralikToplamSaati);
+            }
+
+            // Çalışma saatlerinin ortalamasını alıyoruz
+            double ortalamaSaat = aralikSaatleri.Average();
+
+            return $"Son {secilenBakimlar.Count} bakıma göre ortalama {Math.Round(ortalamaSaat, 1)} saatte bir bakım yapılmış.";
         }
 
         private void DpBaslangic_SelectedDateChanged(object sender, SelectionChangedEventArgs e) => HesaplaVeGuncelle();
