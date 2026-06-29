@@ -7,9 +7,9 @@ using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using System;
 using System.Collections.Generic;
-using System.IO; // Path için eklendi
+using System.IO;
 using System.Linq;
-using System.Text.Json; // JSON okumak için eklendi
+using System.Text.Json;
 using System.Windows;
 
 namespace EkipmanBakimProjesi
@@ -24,6 +24,17 @@ namespace EkipmanBakimProjesi
             QuestPDF.Settings.License = LicenseType.Community;
             dbErisimi = new VeritabaniErisimi();
             EkipmanlariYukle();
+        }
+
+        // --- YENİ EKLENEN: Ana Ekran Aktif Olduğunda Verileri Yenile ---
+        private void Window_Activated(object sender, EventArgs e)
+        {
+            // Kullanıcı başka bir pencereden (örneğin Bakım Yönetim'den) ana ekrana döndüğü an,
+            // seçili ekipmanın güncel durumunu tekrar hesaplar ve ekrana basar.
+            if (CmbEkipmanlar.SelectedItem != null)
+            {
+                BakimVerileriniGuncelle(CmbEkipmanlar.SelectedItem.ToString());
+            }
         }
 
         private void EkipmanlariYukle()
@@ -59,7 +70,6 @@ namespace EkipmanBakimProjesi
                 double toplamSaat = kayitlar.Sum(k => k.WorkingHours ?? 0);
                 TxtToplamSaat.Text = $"Toplam Çalışma Saati: {Math.Round(toplamSaat, 2)} saat";
 
-                // Bakım verilerini de ana ekrana güncelle
                 BakimVerileriniGuncelle(secilenEkipman);
 
                 var calisilmayanGunler = kayitlar
@@ -93,19 +103,15 @@ namespace EkipmanBakimProjesi
             }
         }
 
-        // --- YENİ EKLENEN: Bakım Durumunu Ana Ekrana Yansıtma ---
         private void BakimVerileriniGuncelle(string ekipmanNo)
         {
-            // Veritabanı adını çek
             string dbName = VeritabaniErisimi.AktifVeritabaniAdi;
 
-            // Dosya isimlerini veritabanına özel dinamik oluştur
             string jsonDosyaYolu = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"BakimLoglari_{dbName}.json");
             string ayarDosyasi = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"PeriyotAyari_{ekipmanNo}_{dbName}.json");
 
             double sabitPeriyot = 0;
 
-            // 1. Periyot dosyasını oku
             if (File.Exists(ayarDosyasi))
             {
                 try
@@ -120,7 +126,6 @@ namespace EkipmanBakimProjesi
                 catch { }
             }
 
-            // 2. Bakım kayıtlarını oku
             List<BakimLogModel> tumKayitlar = new List<BakimLogModel>();
             if (File.Exists(jsonDosyaYolu))
             {
@@ -135,7 +140,6 @@ namespace EkipmanBakimProjesi
                 sabitPeriyot = sonBakim.BakimPeriyodu;
             }
 
-            // 3. Çalışılan Saat Hesaplama
             double calisilanSaat = 0;
             if (sonBakim != null)
             {
@@ -150,14 +154,12 @@ namespace EkipmanBakimProjesi
                 calisilanSaat = tumCalisma.Sum(k => k.WorkingHours ?? 0);
             }
 
-            // 4. Kalan Süre ve Tahminleme Matematiği
             string tahminiAyYil = "-";
 
             if (sabitPeriyot > 0)
             {
                 double kalan = sabitPeriyot - calisilanSaat;
 
-                // --- YENİ EKSİ SÜRE KONTROLÜ ---
                 if (kalan > 0)
                 {
                     TxtBakimKalanSure.Text = $"{Math.Round(kalan, 2)} Saat Kaldı";
@@ -165,12 +167,10 @@ namespace EkipmanBakimProjesi
                 }
                 else
                 {
-                    // Gecikme durumu
                     TxtBakimKalanSure.Text = $"Bakım {Math.Round(Math.Abs(kalan), 2)} Saat Gecikti!";
                     TxtBakimKalanSure.Foreground = System.Windows.Media.Brushes.Red;
                 }
 
-                // TAHMİNLEME KISMI (Sadece bu ekipman için)
                 if (kalan > 0)
                 {
                     var tumGecmis = dbErisimi.KayitlariFiltrele(ekipmanNo, null, null);
@@ -183,7 +183,7 @@ namespace EkipmanBakimProjesi
                         double toplamSaat = gecerliKayitlar.Sum(x => x.WorkingHours ?? 0);
 
                         double gunFarki = (sonGun - ilkGun).TotalDays;
-                        if (gunFarki < 1) gunFarki = 1; // Sıfıra bölme hatasını engelle
+                        if (gunFarki < 1) gunFarki = 1;
 
                         double gunlukOrtalama = toplamSaat / gunFarki;
 
@@ -206,7 +206,6 @@ namespace EkipmanBakimProjesi
                 TxtBakimKalanSure.Foreground = System.Windows.Media.Brushes.Gray;
             }
 
-            // Ekrandaki kutuya yazdır (null kontrolü ile güvenli hale getirdik)
             if (TxtTahminiTarihAna != null)
             {
                 TxtTahminiTarihAna.Text = $"Tahmini: {tahminiAyYil}";
@@ -215,20 +214,21 @@ namespace EkipmanBakimProjesi
 
         private void BtnTakip_Click(object sender, RoutedEventArgs e)
         {
-            // Yeni ekranı oluştur ve göster
             BakimTakipEkrani takipEkrani = new BakimTakipEkrani();
+            takipEkrani.Owner = this; // Pencerenin ana ekran arkasında kaybolmasını engeller
             takipEkrani.Show();
         }
 
         private void BtnGecmis_Click(object sender, RoutedEventArgs e)
         {
             GecmisBakimlarEkrani gecmisEkrani = new GecmisBakimlarEkrani();
+            gecmisEkrani.Owner = this;
             gecmisEkrani.Show();
         }
 
-        // (Diğer Butonların aynı şekilde kalacak...)
         private void BtnTarihiTemizle_Click(object sender, RoutedEventArgs e) { DpBaslangic.SelectedDate = null; DpBitis.SelectedDate = null; }
         private void BtnGeri_Click(object sender, RoutedEventArgs e) { GirisEkrani g = new GirisEkrani(); g.Show(); this.Close(); }
+
         private void BtnExcel_Click(object sender, RoutedEventArgs e)
         {
             var kayitlar = DgKayitlar.ItemsSource as List<BakimKaydi>;
@@ -242,7 +242,6 @@ namespace EkipmanBakimProjesi
                 {
                     var worksheet = workbook.Worksheets.Add("Bakım Kayıtları");
 
-                    // 1. Başlıklar ve Başlık Kenarlıkları
                     worksheet.Cell(1, 1).Value = "Ekipman Numarası";
                     worksheet.Cell(1, 2).Value = "Tarih";
                     worksheet.Cell(1, 3).Value = "Çalışma Saati";
@@ -250,11 +249,9 @@ namespace EkipmanBakimProjesi
 
                     var baslikRange = worksheet.Range("A1:D1");
                     baslikRange.Style.Font.Bold = true;
-                    // Başlıklar için iç ve dış kenarlık
                     baslikRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
                     baslikRange.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
 
-                    // Koyu kırmızı tonu (#E74C3C)
                     var koyuKirmizi = XLColor.FromHtml("#E74C3C");
 
                     int row = 2;
@@ -265,12 +262,10 @@ namespace EkipmanBakimProjesi
                         worksheet.Cell(row, 3).Value = k.WorkingHours ?? 0;
                         worksheet.Cell(row, 4).Value = k.Name;
 
-                        // Satır için aralığı belirle ve kenarlık ekle
                         var range = worksheet.Range(row, 1, row, 4);
                         range.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
                         range.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
 
-                        // Çalışma saati 0 veya boşsa kırmızı satır
                         if ((k.WorkingHours ?? 0) == 0)
                         {
                             range.Style.Fill.BackgroundColor = koyuKirmizi;
@@ -279,14 +274,12 @@ namespace EkipmanBakimProjesi
                         row++;
                     }
 
-                    // 2. En alta Toplam Çalışma Saati ve Kenarlıkları
                     int toplamSatir = row;
                     worksheet.Cell(toplamSatir, 2).Value = "TOPLAM ÇALIŞMA SAATİ:";
                     worksheet.Cell(toplamSatir, 2).Style.Font.Bold = true;
                     worksheet.Cell(toplamSatir, 3).FormulaA1 = $"SUM(C2:C{toplamSatir - 1})";
                     worksheet.Cell(toplamSatir, 3).Style.Font.Bold = true;
 
-                    // Toplam satırına iç ve dış kenarlık ekle
                     var toplamRange = worksheet.Range(toplamSatir, 1, toplamSatir, 4);
                     toplamRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
                     toplamRange.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
@@ -315,31 +308,26 @@ namespace EkipmanBakimProjesi
                         page.Content().PaddingVertical(1, Unit.Centimetre).Column(col => {
                             col.Spacing(10);
 
-                            // 1. KÜNYE BİLGİLERİ (Tablo yapısı: Çerçeveli ve dikey çizgili)
                             col.Item().Table(table =>
                             {
                                 table.ColumnsDefinition(c =>
                                 {
-                                    c.ConstantColumn(120); // Etiket 1
-                                    c.RelativeColumn();    // Veri 1
-                                    c.ConstantColumn(120); // Etiket 2
-                                    c.RelativeColumn();    // Veri 2
+                                    c.ConstantColumn(120);
+                                    c.RelativeColumn();
+                                    c.ConstantColumn(120);
+                                    c.RelativeColumn();
                                 });
 
-                                // Satır 1: Ekipman Adı (Tüm satırı kapsayan çerçeve)
                                 table.Cell().Border(0.5f).Padding(5).Text("Ekipman Adı").SemiBold();
                                 table.Cell().ColumnSpan(3).Border(0.5f).Padding(5).Text(kayitlar.First().Name);
 
-                                // Satır 2: Ekipman No ve Toplam Saat (Dikey çizgiler ve dış çerçeve dahil)
                                 table.Cell().Border(0.5f).Padding(5).Text("Ekipman No").SemiBold();
                                 table.Cell().Border(0.5f).Padding(5).Text(kayitlar.First().Equipment.ToString());
 
-                                // Dikey çizgiyi oluşturmak için burada hücreleri tek tek bordürlüyoruz
                                 table.Cell().Border(0.5f).Padding(5).Text("Toplam Saat").SemiBold();
                                 table.Cell().Border(0.5f).Padding(5).Text(TxtToplamSaat.Text.Replace("Toplam Çalışma Saati: ", ""));
                             });
 
-                            // 2. ÇALIŞILMAYAN GÜNLER UYARISI VE LİSTESİ (Toplam saatten sonra)
                             if (DgCalisilmayanGunler.Visibility == Visibility.Visible)
                             {
                                 col.Item().PaddingTop(15).Text(TxtCalisilmayanGunlerOzet.Text).FontSize(13).FontColor(Colors.Red.Medium).Bold().Italic();
@@ -355,7 +343,6 @@ namespace EkipmanBakimProjesi
 
                             col.Item().PaddingTop(20);
 
-                            // 3. ANA VERİ TABLOSU (En Altta)
                             col.Item().Table(table => {
                                 table.ColumnsDefinition(c => { c.RelativeColumn(); c.RelativeColumn(); c.RelativeColumn(); c.RelativeColumn(); });
                                 table.Header(h => {
@@ -373,7 +360,6 @@ namespace EkipmanBakimProjesi
                                 }
                             });
 
-                            // Ana tablodan sonra toplam saati tekrar yazdır
                             col.Item().PaddingTop(10).AlignRight().Text(TxtToplamSaat.Text)
                                 .FontSize(14)
                                 .Bold()
@@ -383,22 +369,13 @@ namespace EkipmanBakimProjesi
                         {
                             table.ColumnsDefinition(columns =>
                             {
-                                columns.ConstantColumn(100); // Sol taraf (Boş bırakılabilir)
-                                columns.RelativeColumn();    // Orta (Sayfa numarası için)
-                                columns.ConstantColumn(150); // Sağ taraf (Tarih için)
+                                columns.ConstantColumn(100);
+                                columns.RelativeColumn();
+                                columns.ConstantColumn(150);
                             });
 
-                            // 1. Sol (Boş)
                             table.Cell().Text("");
-
-                            // 2. Orta: Sayfa Numarası
-                            table.Cell().AlignCenter().Text(x =>
-                            {
-                                x.Span("Sayfa ");
-                                x.CurrentPageNumber();
-                            });
-
-                            // 3. Sağ: Oluşturulma Tarihi (image_c05864.png gibi sağa hizalı)
+                            table.Cell().AlignCenter().Text(x => { x.Span("Sayfa "); x.CurrentPageNumber(); });
                             table.Cell().AlignRight().Text("Oluşturulma: " + DateTime.Now.ToString("dd.MM.yyyy HH:mm")).FontSize(10);
                         });
                     });
@@ -409,7 +386,6 @@ namespace EkipmanBakimProjesi
 
         private void BtnGrafik_Click(object sender, RoutedEventArgs e)
         {
-            // 1. Ekipman seçili mi kontrol et
             if (CmbEkipmanlar.SelectedItem == null)
             {
                 MessageBox.Show("Lütfen önce bir ekipman seçin.");
@@ -417,15 +393,10 @@ namespace EkipmanBakimProjesi
             }
 
             string secilenEkipman = CmbEkipmanlar.SelectedItem.ToString();
-
-            // 2. O ekipmana ait kayıtları çek
-            // 'dbErisimi' değişkenin ana ekranda zaten tanımlı olmalı
             var kayitlar = dbErisimi.KayitlariFiltrele(secilenEkipman, null, null);
 
-            // 3. Mevcut çalışan grafik ekranını parametrelerle çağır
-            // Burada 'kayitlar' bir List<BakimKaydi> döndürüyor olmalı
             GrafikEkrani grafikEkrani = new GrafikEkrani(secilenEkipman, kayitlar.ToList());
-
+            grafikEkrani.Owner = this;
             grafikEkrani.Show();
         }
 
@@ -434,16 +405,8 @@ namespace EkipmanBakimProjesi
             if (CmbEkipmanlar.SelectedItem == null) return;
 
             BakimYonetimEkrani bakimEkrani = new BakimYonetimEkrani(CmbEkipmanlar.SelectedItem.ToString());
-
+            bakimEkrani.Owner = this;
             bakimEkrani.Show();
-
-            // DİREKT EŞİTLEME (Yeni tahmini de dahil ettik)
-            TxtSonBakimTarihi.Text = bakimEkrani.SonBakimTarihi;
-            TxtBakimKalanSure.Text = bakimEkrani.KalanSure;
-            TxtBakimKalanSure.Foreground = bakimEkrani.SureRengi;
-
-            // Yeni eklenen tahmini tarihi de ana ekrana yapıştırıyoruz
-            TxtTahminiTarihAna.Text = $"Tahmini: {bakimEkrani.TahminiTarih}";
         }
     }
 }

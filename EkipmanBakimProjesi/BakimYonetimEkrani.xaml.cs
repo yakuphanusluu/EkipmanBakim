@@ -197,7 +197,6 @@ namespace EkipmanBakimProjesi
 
             double hedef = double.Parse(TxtHedefSaat.Text);
 
-            // YENİ EKLENEN: Kayıt anında dinamik JsonDosyaYolu kullanılıyor
             var tumKayitlar = File.Exists(JsonDosyaYolu) ? JsonSerializer.Deserialize<List<BakimLogModel>>(File.ReadAllText(JsonDosyaYolu)) : new List<BakimLogModel>();
 
             var yeniLog = new BakimLogModel
@@ -219,6 +218,9 @@ namespace EkipmanBakimProjesi
             FormuTemizle();
             HesaplaVeGuncelle();
             MessageBox.Show("Başarıyla kaydedildi.");
+
+            // YENİ EKLENEN: Bakım kaydedildikten sonra pencereyi kapat, ana ekran verileri güncellesin
+            this.Close();
         }
 
         private void TxtHedefSaat_TextChanged(object sender, TextChangedEventArgs e) => HesaplaVeGuncelle();
@@ -227,7 +229,6 @@ namespace EkipmanBakimProjesi
         {
             if (double.TryParse(TxtHedefSaat.Text, out double hedef))
             {
-                // YENİ EKLENEN: Periyot kaydı da veritabanı ismine göre ayrıştırıldı.
                 string ayarDosyasi = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"PeriyotAyari_{EkipmanNo}_{VeritabaniErisimi.AktifVeritabaniAdi}.json");
                 File.WriteAllText(ayarDosyasi, JsonSerializer.Serialize(new { SabitPeriyot = hedef }));
                 MessageBox.Show("Periyot sabitlendi!");
