@@ -74,6 +74,7 @@
         </Grid>
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="📈 Makine Kullanım Raporu" Click="BtnUtilization_Click" Background="#3B82F6" Foreground="White" FontWeight="Bold" Margin="0,0,15,0"/>
             <Button x:Name="BtnGecmis" Content="Geçmiş Bakımlar" Width="130" Height="40" Margin="0,0,15,0" 
             Background="#34495E" Foreground="White" FontWeight="Bold" Cursor="Hand" Click="BtnGecmis_Click"/>
             <Button x:Name="BtnTakip" Content="Bakım Takip Tablosu" Width="150" Height="40" Margin="0,0,15,0" 

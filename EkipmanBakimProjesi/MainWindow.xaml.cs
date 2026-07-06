@@ -408,5 +408,12 @@ namespace EkipmanBakimProjesi
             bakimEkrani.Owner = this;
             bakimEkrani.Show();
         }
+
+        private void BtnUtilization_Click(object sender, RoutedEventArgs e)
+        {
+            MakineKullanimRaporuEkrani raporEkrani = new MakineKullanimRaporuEkrani();
+            raporEkrani.Owner = this;
+            raporEkrani.Show();
+        }
     }
 }
