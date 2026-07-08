@@ -1,7 +1,7 @@
 ﻿<Window x:Class="EkipmanBakimProjesi.UrunTalepEkrani"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Ürün / Yedek Parça Talep Ekranı" Height="600" Width="900" 
+        Title="Ürün / Yedek Parça Talep Ekranı" Height="600" Width="1000" 
         WindowStartupLocation="CenterScreen" Background="#F8FAFC">
     <Grid Margin="20">
         <Grid.RowDefinitions>
@@ -15,28 +15,34 @@
         <Border Grid.Row="1" Background="White" Padding="15" CornerRadius="10" BorderBrush="#E2E8F0" BorderThickness="1" Margin="0,0,0,15">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="100"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="1.5*"/>
+                    <ColumnDefinition Width="1.5*"/>
+                    <ColumnDefinition Width="130"/>
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Column="0" Margin="0,0,15,0">
+                <StackPanel Grid.Column="0" Margin="0,0,10,0">
                     <TextBlock Text="Ürün / Parça Adı:" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,5"/>
                     <TextBox x:Name="TxtUrunAdi" Height="30" Padding="5" FontSize="14"/>
                 </StackPanel>
 
-                <StackPanel Grid.Column="1" Margin="0,0,15,0">
+                <StackPanel Grid.Column="1" Margin="0,0,10,0">
                     <TextBlock Text="Adet:" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,5"/>
                     <TextBox x:Name="TxtAdet" Height="30" Padding="5" FontSize="14" TextAlignment="Center"/>
                 </StackPanel>
 
-                <StackPanel Grid.Column="2" Margin="0,0,15,0">
+                <StackPanel Grid.Column="2" Margin="0,0,10,0">
                     <TextBlock Text="Kullanılacak Makine / Bölüm:" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,5"/>
                     <TextBox x:Name="TxtKullanimYeri" Height="30" Padding="5" FontSize="14"/>
                 </StackPanel>
 
-                <Button Grid.Column="3" Content="➕ Talebi Ekle" Click="BtnEkle_Click" Background="#3B82F6" Foreground="White" FontWeight="Bold" FontSize="14" Height="40" VerticalAlignment="Bottom" BorderThickness="0">
+                <StackPanel Grid.Column="3" Margin="0,0,10,0">
+                    <TextBlock Text="Talep Eden Kişi:" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,5"/>
+                    <TextBox x:Name="TxtTalepEden" Height="30" Padding="5" FontSize="14"/>
+                </StackPanel>
+
+                <Button Grid.Column="4" Content="➕ Talebi Ekle" Click="BtnEkle_Click" Background="#3B82F6" Foreground="White" FontWeight="Bold" FontSize="14" Height="40" VerticalAlignment="Bottom" BorderThickness="0">
                     <Button.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="5"/>
@@ -55,7 +61,7 @@
 
                 <DockPanel Grid.Row="0" Margin="0,0,0,10">
                     <TextBlock Text="📋 Mevcut Talepler Listesi" FontWeight="Bold" FontSize="16" Foreground="#1E293B" VerticalAlignment="Center"/>
-                    <Button Content="📊 Excel'e Aktar" Click="BtnExcel_Click" HorizontalAlignment="Right" Background="#10B981" Foreground="White" FontWeight="Bold" Padding="15,5" BorderThickness="0">
+                    <Button Content="📊 Excel'e Aktar ve Sıfırla" Click="BtnExcel_Click" HorizontalAlignment="Right" Background="#10B981" Foreground="White" FontWeight="Bold" Padding="15,5" BorderThickness="0">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="5"/>
@@ -66,11 +72,12 @@
 
                 <DataGrid Grid.Row="1" x:Name="DgTalepler" AutoGenerateColumns="False" IsReadOnly="True" HeadersVisibility="Column" Background="Transparent" RowHeight="35" AlternatingRowBackground="#F1F5F9">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Talep Tarihi" Binding="{Binding TalepTarihi, StringFormat=dd.MM.yyyy HH:mm}" Width="150" FontWeight="SemiBold"/>
-                        <DataGridTextColumn Header="Ürün / Parça Adı" Binding="{Binding UrunAdi}" Width="*"/>
-                        <DataGridTextColumn Header="Miktar" Binding="{Binding Miktar}" Width="80"/>
-                        <DataGridTextColumn Header="Kullanım Yeri" Binding="{Binding KullanimYeri}" Width="*"/>
-                        <DataGridTemplateColumn Header="İşlem" Width="80">
+                        <DataGridTextColumn Header="Talep Tarihi" Binding="{Binding TalepTarihi, StringFormat=dd.MM.yyyy HH:mm}" Width="140" FontWeight="SemiBold"/>
+                        <DataGridTextColumn Header="Ürün / Parça Adı" Binding="{Binding UrunAdi}" Width="2*"/>
+                        <DataGridTextColumn Header="Miktar" Binding="{Binding Miktar}" Width="70"/>
+                        <DataGridTextColumn Header="Kullanım Yeri" Binding="{Binding KullanimYeri}" Width="1.5*"/>
+                        <DataGridTextColumn Header="Talep Eden" Binding="{Binding TalepEdenKisi}" Width="1.5*"/>
+                        <DataGridTemplateColumn Header="İşlem" Width="70">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button Content="Sil" Click="BtnSil_Click" Background="#EF4444" Foreground="White" FontWeight="Bold" BorderThickness="0" Padding="10,2" Margin="2"/>

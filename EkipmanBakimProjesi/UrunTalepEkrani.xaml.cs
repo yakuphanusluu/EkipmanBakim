@@ -11,21 +11,19 @@ using Microsoft.Win32;
 
 namespace EkipmanBakimProjesi
 {
-    // Verileri tutacağımız model
     public class UrunTalepModel
     {
-        public string Id { get; set; } = Guid.NewGuid().ToString(); // Silme işlemi için benzersiz kimlik
+        public string Id { get; set; } = Guid.NewGuid().ToString();
         public string UrunAdi { get; set; }
         public int Miktar { get; set; }
         public string KullanimYeri { get; set; }
+        public string TalepEdenKisi { get; set; } // YENİ ÖZELLİK
         public DateTime TalepTarihi { get; set; }
     }
 
     public partial class UrunTalepEkrani : Window
     {
         private ObservableCollection<UrunTalepModel> _talepListesi;
-
-        // Verilerin kaydedileceği dosya
         private string JsonDosyaYolu => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UrunTalepleri.json");
 
         public UrunTalepEkrani()
@@ -58,10 +56,10 @@ namespace EkipmanBakimProjesi
 
         private void BtnEkle_Click(object sender, RoutedEventArgs e)
         {
-            // Giriş kontrolleri
-            if (string.IsNullOrWhiteSpace(TxtUrunAdi.Text) || string.IsNullOrWhiteSpace(TxtKullanimYeri.Text))
+            // YENİ: Kontrollere TxtTalepEden de eklendi
+            if (string.IsNullOrWhiteSpace(TxtUrunAdi.Text) || string.IsNullOrWhiteSpace(TxtKullanimYeri.Text) || string.IsNullOrWhiteSpace(TxtTalepEden.Text))
             {
-                MessageBox.Show("Lütfen ürün adı ve kullanım yerini boş bırakmayın.", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Lütfen tüm alanları doldurun.", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -71,23 +69,22 @@ namespace EkipmanBakimProjesi
                 return;
             }
 
-            // Yeni talebi oluştur
             var yeniTalep = new UrunTalepModel
             {
                 UrunAdi = TxtUrunAdi.Text.Trim(),
                 Miktar = miktar,
                 KullanimYeri = TxtKullanimYeri.Text.Trim(),
+                TalepEdenKisi = TxtTalepEden.Text.Trim(), // YENİ
                 TalepTarihi = DateTime.Now
             };
 
-            // Listeye ekle (En üste)
             _talepListesi.Insert(0, yeniTalep);
             VerileriKaydet();
 
-            // Kutuları temizle
             TxtUrunAdi.Clear();
             TxtAdet.Clear();
             TxtKullanimYeri.Clear();
+            TxtTalepEden.Clear(); // YENİ
 
             MessageBox.Show("Talep başarıyla eklendi!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
         }
@@ -121,24 +118,25 @@ namespace EkipmanBakimProjesi
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
             };
 
-            if (sfd.ShowDialog() == true)
+            // Bir önceki odak probleminden dolayı 'this' parametresini eklemeyi unutmadım kanka
+            if (sfd.ShowDialog(this) == true)
             {
                 using (var workbook = new XLWorkbook())
                 {
                     var ws = workbook.Worksheets.Add("Ürün Talepleri");
 
-                    // Başlıklar
+                    // Başlıklar (E sütununa yeni başlık eklendi)
                     ws.Cell(1, 1).Value = "Talep Tarihi";
                     ws.Cell(1, 2).Value = "Ürün / Parça Adı";
                     ws.Cell(1, 3).Value = "Miktar";
                     ws.Cell(1, 4).Value = "Kullanım Yeri";
+                    ws.Cell(1, 5).Value = "Talep Eden Kişi"; // YENİ
 
-                    var baslik = ws.Range("A1:D1");
+                    var baslik = ws.Range("A1:E1");
                     baslik.Style.Font.Bold = true;
                     baslik.Style.Fill.BackgroundColor = XLColor.FromHtml("#1E293B");
                     baslik.Style.Font.FontColor = XLColor.White;
 
-                    // Veriler
                     int row = 2;
                     foreach (var t in _talepListesi)
                     {
@@ -146,13 +144,18 @@ namespace EkipmanBakimProjesi
                         ws.Cell(row, 2).Value = t.UrunAdi;
                         ws.Cell(row, 3).Value = t.Miktar;
                         ws.Cell(row, 4).Value = t.KullanimYeri;
+                        ws.Cell(row, 5).Value = t.TalepEdenKisi; // YENİ
                         row++;
                     }
 
                     ws.Columns().AdjustToContents();
                     workbook.SaveAs(sfd.FileName);
 
-                    MessageBox.Show("Talep listesi başarıyla Excel'e aktarıldı!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+                    // --- ÇÖZÜM BURADA: Kayıt başarılı olduktan sonra listeyi sıfırlıyoruz ---
+                    _talepListesi.Clear(); // Ekranı temizler
+                    VerileriKaydet();     // JSON dosyasını sıfırlar
+
+                    MessageBox.Show("Talep listesi başarıyla Excel'e aktarıldı ve bekleyen talepler sıfırlandı!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
         }
