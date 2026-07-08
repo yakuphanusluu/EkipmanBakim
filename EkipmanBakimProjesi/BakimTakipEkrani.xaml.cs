@@ -8,10 +8,10 @@ using EkipmanBakimProjesi.Data;
 
 namespace EkipmanBakimProjesi
 {
-    // Listede göstermek için kullanacağımız model
     public class BakimTakipModel
     {
         public string EkipmanNo { get; set; }
+        public string EkipmanAdi { get; set; }
         public string SonBakim { get; set; }
         public double KalanSaat { get; set; }
         public string KalanSureMetin { get; set; }
@@ -23,7 +23,6 @@ namespace EkipmanBakimProjesi
     {
         private VeritabaniErisimi _dbErisimi;
 
-        // DEĞİŞİKLİK 1: Sabit dosya yolu yerine aktif veritabanına göre dinamik dosya yolu
         private string JsonDosyaYolu => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"BakimLoglari_{VeritabaniErisimi.AktifVeritabaniAdi}.json");
 
         public BakimTakipEkrani()
@@ -46,10 +45,19 @@ namespace EkipmanBakimProjesi
 
             foreach (var eq in ekipmanlar)
             {
+                // ÇÖZÜM BURADA: Her makine için kendi numarasıyla veritabanına soruyoruz!
+                var kayitlarDb = _dbErisimi.KayitlariFiltrele(eq, null, null);
+
+                string isim = "Tanımsız Makine";
+                if (kayitlarDb != null && kayitlarDb.Any())
+                {
+                    var makine = kayitlarDb.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Name));
+                    if (makine != null) isim = makine.Name;
+                }
+                string tamEkipmanAdi = $"{eq} - {isim}";
+
                 // 1. Periyodu Bul
                 double periyot = 0;
-
-                // DEĞİŞİKLİK 2: Periyot dosyası aktif veritabanına bağlandı
                 string ayarDosyasi = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"PeriyotAyari_{eq}_{VeritabaniErisimi.AktifVeritabaniAdi}.json");
 
                 if (File.Exists(ayarDosyasi))
@@ -65,7 +73,6 @@ namespace EkipmanBakimProjesi
                 var sonBakim = tumBakimlar.Where(x => x.EkipmanNo == eq).OrderByDescending(x => x.KayitZamani).FirstOrDefault();
                 if (periyot == 0 && sonBakim != null) periyot = sonBakim.BakimPeriyodu;
 
-                // Periyot hiç ayarlanmamışsa listeye ekleme
                 if (periyot == 0) continue;
 
                 // 2. Çalışılan Saati Hesapla
@@ -80,8 +87,8 @@ namespace EkipmanBakimProjesi
                 }
                 else
                 {
-                    var kayitlar = _dbErisimi.KayitlariFiltrele(eq, (DateTime?)null, (DateTime?)null);
-                    calisilanSaat = kayitlar.Sum(k => k.WorkingHours ?? 0);
+                    // Yukarıda çektiğimiz db kayıtlarını kullanabiliriz (performans için)
+                    calisilanSaat = kayitlarDb.Sum(k => k.WorkingHours ?? 0);
                 }
 
                 // 3. Durumu Belirle
@@ -112,6 +119,7 @@ namespace EkipmanBakimProjesi
                 takipListesi.Add(new BakimTakipModel
                 {
                     EkipmanNo = eq,
+                    EkipmanAdi = tamEkipmanAdi,
                     SonBakim = sonBakimTarihiTxt,
                     KalanSaat = kalan,
                     KalanSureMetin = kalanSureMetin,
@@ -120,7 +128,6 @@ namespace EkipmanBakimProjesi
                 });
             }
 
-            // Kalan süresi en az olan (veya eksiye düşen) en üstte görünsün diye sıralıyoruz
             DgBakimTakip.ItemsSource = takipListesi.OrderBy(x => x.KalanSaat).ToList();
         }
     }

@@ -187,7 +187,7 @@ namespace EkipmanBakimProjesi
             if (_analizListesi == null || !_analizListesi.Any()) return;
 
             SaveFileDialog sfd = new SaveFileDialog { Filter = "PDF Dosyası|*.pdf", FileName = $"MakineKullanimAnalizi_{DateTime.Now:yyyyMMdd}.pdf" };
-            if (sfd.ShowDialog() == true)
+            if (sfd.ShowDialog(this) == true)
             {
                 Document.Create(container => {
                     container.Page(page => {
@@ -234,6 +234,15 @@ namespace EkipmanBakimProjesi
                 }).GeneratePdf(sfd.FileName);
 
                 MessageBox.Show("PDF Raporu başarıyla oluşturuldu!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            // Kapanan pencerenin sahibi (ana ekran) varsa ona odaklanmayı zorla
+            if (this.Owner != null)
+            {
+                this.Owner.Activate();
             }
         }
     }

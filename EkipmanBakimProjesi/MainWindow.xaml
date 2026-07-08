@@ -73,19 +73,25 @@
             </Border>
         </Grid>
 
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="📈 Makine Kullanım Raporu" Click="BtnUtilization_Click" Background="#3B82F6" Foreground="White" FontWeight="Bold" Margin="0,0,15,0"/>
-            <Button x:Name="BtnGecmis" Content="Geçmiş Bakımlar" Width="130" Height="40" Margin="0,0,15,0" 
-            Background="#34495E" Foreground="White" FontWeight="Bold" Cursor="Hand" Click="BtnGecmis_Click"/>
-            <Button x:Name="BtnTakip" Content="Bakım Takip Tablosu" Width="150" Height="40" Margin="0,0,15,0" 
-            Background="#F39C12" Foreground="White" FontWeight="Bold" Cursor="Hand" Click="BtnTakip_Click"/>
-            <Button x:Name="BtnBakim" Content="Bakım Yönetimi" Width="120" Height="40" Margin="0,0,15,0" Background="#2ECC71" Foreground="White" FontWeight="Bold" Click="BtnBakim_Click"/>
-            <Button x:Name="BtnGrafik" Content="Grafik Göster" Width="140" Height="40" Margin="0,0,15,0" 
-                    Background="#FF8E44AD" Foreground="White" FontWeight="Bold" Cursor="Hand" Click="BtnGrafik_Click"/>
-            <Button x:Name="BtnExcel" Content="Excel'e Aktar" Width="140" Height="40" Margin="0,0,15,0" 
-                    Background="#FF217346" Foreground="White" FontWeight="Bold" Cursor="Hand" Click="BtnExcel_Click"/>
-            <Button x:Name="BtnPdf" Content="Rapor Çıkart (PDF)" Width="140" Height="40" 
-                    Background="#FFD24726" Foreground="White" FontWeight="Bold" Cursor="Hand" Click="BtnPdf_Click"/>
-        </StackPanel>
+        <Grid Grid.Row="3" Margin="10,20,10,10" VerticalAlignment="Bottom">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10">
+                <Button Content="Ürün/Parça Talep" Click="BtnUrunTalep_Click" Background="#06B6D4" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
+                <Button Content="Makine Kullanım Raporu" Click="BtnUtilization_Click" Background="#3B82F6" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
+                <Button Content="Geçmiş Bakımlar" Click="BtnGecmis_Click" Background="#374151" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
+                <Button Content="Bakım Takip Tablosu" Click="BtnTakip_Click" Background="#F59E0B" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
+                <Button Content="Bakım Yönetimi" Click="BtnBakim_Click" Background="#10B981" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
+                <Button Content="Grafik Göster" Click="BtnGrafik_Click" Background="#8B5CF6" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
+            </StackPanel>
+
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Excel'e Aktar" Click="BtnExcel_Click" Background="#059669" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
+                <Button Content="Rapor Çıkart (PDF)" Click="BtnPdf_Click" Background="#DC2626" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>

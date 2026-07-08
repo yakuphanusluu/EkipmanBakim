@@ -12,11 +12,14 @@ using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 
+// YENİ EKLENEN TAKMA AD: WPF ve QuestPDF renk çakışmasını engellemek için
+using PDFColors = QuestPDF.Helpers.Colors;
+
 namespace EkipmanBakimProjesi
 {
     public partial class GecmisBakimlarEkrani : Window
     {
-        // DEĞİŞİKLİK BURADA: Artık sabit (readonly) değil, aktif veritabanı ismine göre dinamik dosya yolunu alıyor.
+        // Artık sabit (readonly) değil, aktif veritabanı ismine göre dinamik dosya yolunu alıyor.
         private string JsonDosyaYolu => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"BakimLoglari_{VeritabaniErisimi.AktifVeritabaniAdi}.json");
 
         private List<BakimLogModel> _tumKayitlar;
@@ -42,9 +45,25 @@ namespace EkipmanBakimProjesi
                 _tumKayitlar = new List<BakimLogModel>();
             }
 
-            // Veritabanındaki tüm benzersiz ekipmanları getiriyoruz
-            var ekipmanListesi = _dbErisimi.BenzersizEkipmanlariGetir();
-            ekipmanListesi.Insert(0, "Tüm Ekipmanlar");
+            // Benzersiz numaraları çek
+            var numaralar = _dbErisimi.BenzersizEkipmanlariGetir();
+            List<string> ekipmanListesi = new List<string> { "Tüm Ekipmanlar" };
+
+            foreach (var no in numaralar)
+            {
+                // ÇÖZÜM: Her makineyi kendi numarasıyla veritabanından canlı sorguluyoruz
+                var kayitlar = _dbErisimi.KayitlariFiltrele(no, null, null);
+
+                string isim = "Tanımsız Makine";
+                if (kayitlar != null && kayitlar.Any())
+                {
+                    var makine = kayitlar.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Name));
+                    if (makine != null) isim = makine.Name;
+                }
+
+                ekipmanListesi.Add($"{no} - {isim}");
+            }
+
             CmbEkipman.ItemsSource = ekipmanListesi;
             CmbEkipman.SelectedIndex = 0;
 
@@ -70,8 +89,10 @@ namespace EkipmanBakimProjesi
             // Ekipman Filtresi
             if (CmbEkipman.SelectedIndex > 0)
             {
-                string seciliEkipman = CmbEkipman.SelectedItem.ToString();
-                filtrelenmisListe = filtrelenmisListe.Where(x => x.EkipmanNo == seciliEkipman);
+                // --- DEĞİŞİKLİK BURADA: Sadece Numarayı çekip filtreliyoruz ---
+                string seciliTamMetin = CmbEkipman.SelectedItem.ToString();
+                string seciliNo = seciliTamMetin.Split('-')[0].Trim();
+                filtrelenmisListe = filtrelenmisListe.Where(x => x.EkipmanNo == seciliNo);
             }
 
             // Kişi Filtresi
@@ -135,7 +156,8 @@ namespace EkipmanBakimProjesi
             {
                 // Veriyi yeni oluşturduğumuz Detay Ekranına gönder ve ekranı aç
                 BakimDetayiEkrani detayEkrani = new BakimDetayiEkrani(seciliKayit);
-                detayEkrani.Show();
+                detayEkrani.Owner = this;
+                detayEkrani.ShowDialog();
             }
         }
 
@@ -241,7 +263,7 @@ namespace EkipmanBakimProjesi
                         page.Size(PageSizes.A4);
                         page.Margin(2, Unit.Centimetre);
 
-                        page.Header().AlignCenter().Text("GEÇMİŞ BAKIM KAYITLARI RAPORU").SemiBold().FontSize(18).FontColor(Colors.Black);
+                        page.Header().AlignCenter().Text("GEÇMİŞ BAKIM KAYITLARI RAPORU").SemiBold().FontSize(18).FontColor(PDFColors.Black);
 
                         page.Content().PaddingVertical(1, Unit.Centimetre).Column(col => {
                             col.Spacing(10);
@@ -273,7 +295,7 @@ namespace EkipmanBakimProjesi
                             col.Item().PaddingTop(10);
 
                             // Özet Metni
-                            col.Item().Text($"Listelenen Toplam Bakım Kaydı: {kayitlar.Count()} adet").FontSize(12).Italic().FontColor(Colors.Grey.Darken2);
+                            col.Item().Text($"Listelenen Toplam Bakım Kaydı: {kayitlar.Count()} adet").FontSize(12).Italic().FontColor(PDFColors.Grey.Darken2);
                             col.Item().PaddingTop(5);
 
                             // Ana Veri Tablosu
@@ -287,20 +309,20 @@ namespace EkipmanBakimProjesi
                                 });
 
                                 table.Header(h => {
-                                    h.Cell().Background(Colors.Grey.Lighten2).Border(0.5f).BorderColor(Colors.Grey.Lighten1).Padding(5).Text("Ekipman Numarası").Bold();
-                                    h.Cell().Background(Colors.Grey.Lighten2).Border(0.5f).BorderColor(Colors.Grey.Lighten1).Padding(5).Text("Bakım Tarihi").Bold();
-                                    h.Cell().Background(Colors.Grey.Lighten2).Border(0.5f).BorderColor(Colors.Grey.Lighten1).Padding(5).Text("Bakımı Yapan").Bold();
-                                    h.Cell().Background(Colors.Grey.Lighten2).Border(0.5f).BorderColor(Colors.Grey.Lighten1).Padding(5).Text("Periyot (Saat)").Bold();
-                                    h.Cell().Background(Colors.Grey.Lighten2).Border(0.5f).BorderColor(Colors.Grey.Lighten1).Padding(5).Text("Bakım Detayı").Bold();
+                                    h.Cell().Background(PDFColors.Grey.Lighten2).Border(0.5f).BorderColor(PDFColors.Grey.Lighten1).Padding(5).Text("Ekipman Numarası").Bold();
+                                    h.Cell().Background(PDFColors.Grey.Lighten2).Border(0.5f).BorderColor(PDFColors.Grey.Lighten1).Padding(5).Text("Bakım Tarihi").Bold();
+                                    h.Cell().Background(PDFColors.Grey.Lighten2).Border(0.5f).BorderColor(PDFColors.Grey.Lighten1).Padding(5).Text("Bakımı Yapan").Bold();
+                                    h.Cell().Background(PDFColors.Grey.Lighten2).Border(0.5f).BorderColor(PDFColors.Grey.Lighten1).Padding(5).Text("Periyot (Saat)").Bold();
+                                    h.Cell().Background(PDFColors.Grey.Lighten2).Border(0.5f).BorderColor(PDFColors.Grey.Lighten1).Padding(5).Text("Bakım Detayı").Bold();
                                 });
 
                                 foreach (var k in kayitlar)
                                 {
-                                    table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten1).Padding(5).Text(k.EkipmanNo);
-                                    table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten1).Padding(5).Text(k.BakimTarihi.ToString("dd.MM.yyyy"));
-                                    table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten1).Padding(5).Text(k.BakimYapanKisi ?? "-");
-                                    table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten1).Padding(5).Text(k.BakimPeriyodu.ToString());
-                                    table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten1).Padding(5).Text(k.Aciklama ?? "-");
+                                    table.Cell().BorderBottom(0.5f).BorderColor(PDFColors.Grey.Lighten1).Padding(5).Text(k.EkipmanNo);
+                                    table.Cell().BorderBottom(0.5f).BorderColor(PDFColors.Grey.Lighten1).Padding(5).Text(k.BakimTarihi.ToString("dd.MM.yyyy"));
+                                    table.Cell().BorderBottom(0.5f).BorderColor(PDFColors.Grey.Lighten1).Padding(5).Text(k.BakimYapanKisi ?? "-");
+                                    table.Cell().BorderBottom(0.5f).BorderColor(PDFColors.Grey.Lighten1).Padding(5).Text(k.BakimPeriyodu.ToString());
+                                    table.Cell().BorderBottom(0.5f).BorderColor(PDFColors.Grey.Lighten1).Padding(5).Text(k.Aciklama ?? "-");
                                 }
                             });
                         });

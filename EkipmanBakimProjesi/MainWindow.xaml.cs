@@ -12,6 +12,8 @@ using System.Linq;
 using System.Text.Json;
 using System.Windows;
 
+using PDFColors = QuestPDF.Helpers.Colors;
+
 namespace EkipmanBakimProjesi
 {
     public partial class MainWindow : Window
@@ -26,14 +28,13 @@ namespace EkipmanBakimProjesi
             EkipmanlariYukle();
         }
 
-        // --- YENİ EKLENEN: Ana Ekran Aktif Olduğunda Verileri Yenile ---
         private void Window_Activated(object sender, EventArgs e)
         {
-            // Kullanıcı başka bir pencereden (örneğin Bakım Yönetim'den) ana ekrana döndüğü an,
-            // seçili ekipmanın güncel durumunu tekrar hesaplar ve ekrana basar.
             if (CmbEkipmanlar.SelectedItem != null)
             {
-                BakimVerileriniGuncelle(CmbEkipmanlar.SelectedItem.ToString());
+                // DÜZELTME: Sadece "-" işaretinden önceki numarayı alıyoruz
+                string secilenEkipman = CmbEkipmanlar.SelectedItem.ToString().Split('-')[0].Trim();
+                BakimVerileriniGuncelle(secilenEkipman);
             }
         }
 
@@ -41,8 +42,28 @@ namespace EkipmanBakimProjesi
         {
             try
             {
-                var ekipmanlar = dbErisimi.BenzersizEkipmanlariGetir();
-                CmbEkipmanlar.ItemsSource = ekipmanlar;
+                // Önce sadece benzersiz numaraları alıyoruz
+                var ekipmanNumaralari = dbErisimi.BenzersizEkipmanlariGetir();
+                List<string> gosterimListesi = new List<string>();
+
+                foreach (var no in ekipmanNumaralari)
+                {
+                    // ÇÖZÜM: Her makineyi kendi numarasıyla veritabanından canlı sorguluyoruz
+                    var kayitlar = dbErisimi.KayitlariFiltrele(no, null, null);
+
+                    string isim = "Tanımsız Makine";
+                    if (kayitlar != null && kayitlar.Any())
+                    {
+                        // O makineye ait kayıtlardan adı boş olmayan ilkini alıyoruz
+                        var makine = kayitlar.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Name));
+                        if (makine != null) isim = makine.Name;
+                    }
+
+                    // "200087 - Şişirme Makinesi" formatında listeye ekle
+                    gosterimListesi.Add($"{no} - {isim}");
+                }
+
+                CmbEkipmanlar.ItemsSource = gosterimListesi;
             }
             catch (Exception ex)
             {
@@ -58,7 +79,8 @@ namespace EkipmanBakimProjesi
                 return;
             }
 
-            string secilenEkipman = CmbEkipmanlar.SelectedItem.ToString();
+            // DÜZELTME: Sadece numarayı ayıkla
+            string secilenEkipman = CmbEkipmanlar.SelectedItem.ToString().Split('-')[0].Trim();
             DateTime? baslangic = DpBaslangic.SelectedDate;
             DateTime? bitis = DpBitis.SelectedDate;
 
@@ -212,10 +234,17 @@ namespace EkipmanBakimProjesi
             }
         }
 
+        private void BtnUtilization_Click(object sender, RoutedEventArgs e)
+        {
+            MakineKullanimRaporuEkrani raporEkrani = new MakineKullanimRaporuEkrani();
+            raporEkrani.Owner = this;
+            raporEkrani.ShowDialog();
+        }
+
         private void BtnTakip_Click(object sender, RoutedEventArgs e)
         {
             BakimTakipEkrani takipEkrani = new BakimTakipEkrani();
-            takipEkrani.Owner = this; // Pencerenin ana ekran arkasında kaybolmasını engeller
+            takipEkrani.Owner = this;
             takipEkrani.Show();
         }
 
@@ -223,7 +252,7 @@ namespace EkipmanBakimProjesi
         {
             GecmisBakimlarEkrani gecmisEkrani = new GecmisBakimlarEkrani();
             gecmisEkrani.Owner = this;
-            gecmisEkrani.Show();
+            gecmisEkrani.ShowDialog();
         }
 
         private void BtnTarihiTemizle_Click(object sender, RoutedEventArgs e) { DpBaslangic.SelectedDate = null; DpBitis.SelectedDate = null; }
@@ -335,9 +364,9 @@ namespace EkipmanBakimProjesi
 
                                 col.Item().Table(t => {
                                     t.ColumnsDefinition(c => c.RelativeColumn());
-                                    t.Header(h => h.Cell().Background(Colors.Grey.Lighten2).Padding(5).Text("Tarih").Bold());
+                                    t.Header(h => h.Cell().Background(PDFColors.Grey.Lighten2).Padding(5).Text("Tarih").Bold());
                                     foreach (var gun in (List<DateTime>)DgCalisilmayanGunler.ItemsSource)
-                                        t.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten1).Padding(5).Text(gun.ToString("dd.MM.yyyy"));
+                                        t.Cell().BorderBottom(0.5f).BorderColor(PDFColors.Grey.Lighten1).Padding(5).Text(gun.ToString("dd.MM.yyyy"));
                                 });
                             }
 
@@ -346,24 +375,24 @@ namespace EkipmanBakimProjesi
                             col.Item().Table(table => {
                                 table.ColumnsDefinition(c => { c.RelativeColumn(); c.RelativeColumn(); c.RelativeColumn(); c.RelativeColumn(); });
                                 table.Header(h => {
-                                    h.Cell().Background(Colors.Grey.Lighten2).Padding(5).Text("Ekipman No").Bold();
-                                    h.Cell().Background(Colors.Grey.Lighten2).Padding(5).Text("Tarih").Bold();
-                                    h.Cell().Background(Colors.Grey.Lighten2).Padding(5).Text("Saat").Bold();
-                                    h.Cell().Background(Colors.Grey.Lighten2).Padding(5).Text("Ekipman Adı").Bold();
+                                    h.Cell().Background(PDFColors.Grey.Lighten2).Padding(5).Text("Ekipman No").Bold();
+                                    h.Cell().Background(PDFColors.Grey.Lighten2).Padding(5).Text("Tarih").Bold();
+                                    h.Cell().Background(PDFColors.Grey.Lighten2).Padding(5).Text("Saat").Bold();
+                                    h.Cell().Background(PDFColors.Grey.Lighten2).Padding(5).Text("Ekipman Adı").Bold();
                                 });
                                 foreach (var k in kayitlar)
                                 {
-                                    table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten1).Padding(5).Text(k.Equipment.ToString());
-                                    table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten1).Padding(5).Text(k.Date?.ToString("dd.MM.yyyy") ?? "-");
-                                    table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten1).Padding(5).Text(k.WorkingHours?.ToString() ?? "0");
-                                    table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten1).Padding(5).Text(k.Name ?? "-");
+                                    table.Cell().BorderBottom(0.5f).BorderColor(PDFColors.Grey.Lighten1).Padding(5).Text(k.Equipment.ToString());
+                                    table.Cell().BorderBottom(0.5f).BorderColor(PDFColors.Grey.Lighten1).Padding(5).Text(k.Date?.ToString("dd.MM.yyyy") ?? "-");
+                                    table.Cell().BorderBottom(0.5f).BorderColor(PDFColors.Grey.Lighten1).Padding(5).Text(k.WorkingHours?.ToString() ?? "0");
+                                    table.Cell().BorderBottom(0.5f).BorderColor(PDFColors.Grey.Lighten1).Padding(5).Text(k.Name ?? "-");
                                 }
                             });
 
                             col.Item().PaddingTop(10).AlignRight().Text(TxtToplamSaat.Text)
                                 .FontSize(14)
                                 .Bold()
-                                .FontColor(Colors.Green.Darken2);
+                                .FontColor(PDFColors.Green.Darken2);
                         });
                         page.Footer().Table(table =>
                         {
@@ -392,7 +421,8 @@ namespace EkipmanBakimProjesi
                 return;
             }
 
-            string secilenEkipman = CmbEkipmanlar.SelectedItem.ToString();
+            // DÜZELTME: Sadece numarayı ayıkla
+            string secilenEkipman = CmbEkipmanlar.SelectedItem.ToString().Split('-')[0].Trim();
             var kayitlar = dbErisimi.KayitlariFiltrele(secilenEkipman, null, null);
 
             GrafikEkrani grafikEkrani = new GrafikEkrani(secilenEkipman, kayitlar.ToList());
@@ -404,16 +434,19 @@ namespace EkipmanBakimProjesi
         {
             if (CmbEkipmanlar.SelectedItem == null) return;
 
-            BakimYonetimEkrani bakimEkrani = new BakimYonetimEkrani(CmbEkipmanlar.SelectedItem.ToString());
+            // DÜZELTME: Sadece numarayı ayıkla
+            string secilenEkipman = CmbEkipmanlar.SelectedItem.ToString().Split('-')[0].Trim();
+
+            BakimYonetimEkrani bakimEkrani = new BakimYonetimEkrani(secilenEkipman);
             bakimEkrani.Owner = this;
             bakimEkrani.Show();
         }
 
-        private void BtnUtilization_Click(object sender, RoutedEventArgs e)
+        private void BtnUrunTalep_Click(object sender, RoutedEventArgs e)
         {
-            MakineKullanimRaporuEkrani raporEkrani = new MakineKullanimRaporuEkrani();
-            raporEkrani.Owner = this;
-            raporEkrani.Show();
+            UrunTalepEkrani talepEkrani = new UrunTalepEkrani();
+            talepEkrani.Owner = this;
+            talepEkrani.ShowDialog();
         }
     }
 }
