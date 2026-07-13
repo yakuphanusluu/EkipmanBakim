@@ -80,8 +80,10 @@
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10">
+                <Button Content="Arıza Geçmişi" Click="BtnArizaGecmisi_Click" Background="#475569" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
+
+                <Button Content="Arıza Bildir" Click="BtnArizaBildir_Click" Background="#DC2626" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
                 <Button Content="Ürün/Parça Talep" Click="BtnUrunTalep_Click" Background="#06B6D4" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
-                <Button Content="Makine Kullanım Raporu" Click="BtnUtilization_Click" Background="#3B82F6" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
                 <Button Content="Geçmiş Bakımlar" Click="BtnGecmis_Click" Background="#374151" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
                 <Button Content="Bakım Takip Tablosu" Click="BtnTakip_Click" Background="#F59E0B" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
                 <Button Content="Bakım Yönetimi" Click="BtnBakim_Click" Background="#10B981" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
@@ -89,6 +91,7 @@
             </StackPanel>
 
             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Makine Kullanım Raporu" Click="BtnUtilization_Click" Background="#3B82F6" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
                 <Button Content="Excel'e Aktar" Click="BtnExcel_Click" Background="#059669" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
                 <Button Content="Rapor Çıkart (PDF)" Click="BtnPdf_Click" Background="#DC2626" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
             </StackPanel>

@@ -245,7 +245,7 @@ namespace EkipmanBakimProjesi
         {
             BakimTakipEkrani takipEkrani = new BakimTakipEkrani();
             takipEkrani.Owner = this;
-            takipEkrani.Show();
+            takipEkrani.ShowDialog();
         }
 
         private void BtnGecmis_Click(object sender, RoutedEventArgs e)
@@ -439,7 +439,7 @@ namespace EkipmanBakimProjesi
 
             BakimYonetimEkrani bakimEkrani = new BakimYonetimEkrani(secilenEkipman);
             bakimEkrani.Owner = this;
-            bakimEkrani.Show();
+            bakimEkrani.ShowDialog();
         }
 
         private void BtnUrunTalep_Click(object sender, RoutedEventArgs e)
@@ -447,6 +447,22 @@ namespace EkipmanBakimProjesi
             UrunTalepEkrani talepEkrani = new UrunTalepEkrani();
             talepEkrani.Owner = this;
             talepEkrani.ShowDialog();
+        }
+
+        private void BtnArizaBildir_Click(object sender, RoutedEventArgs e)
+        {
+            ArizaBildirimEkrani arizaEkrani = new ArizaBildirimEkrani();
+            arizaEkrani.Owner = this;
+            arizaEkrani.ShowDialog();
+
+            // Eğer Bakım Takip ekranı arkada açıksa onu da tazelemek iyi olabilir
+        }
+
+        private void BtnArizaGecmisi_Click(object sender, RoutedEventArgs e)
+        {
+            ArizaGecmisiEkrani ekran = new ArizaGecmisiEkrani();
+            ekran.Owner = this;
+            ekran.ShowDialog();
         }
     }
 }

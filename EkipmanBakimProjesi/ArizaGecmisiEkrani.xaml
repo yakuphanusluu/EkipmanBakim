@@ -1,0 +1,45 @@
+﻿<Window x:Class="EkipmanBakimProjesi.ArizaGecmisiEkrani"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Arıza Geçmişi" Height="500" Width="1000" WindowStartupLocation="CenterOwner" Background="#F8FAFC">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="🛠️ Geçmiş Arıza Kayıtları" FontSize="22" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,15"/>
+
+        <DataGrid Grid.Row="1" x:Name="DgArizaGecmisi" AutoGenerateColumns="False" IsReadOnly="True" 
+                  HeadersVisibility="Column" Background="White" RowHeight="35" AlternatingRowBackground="#F1F5F9">
+            <DataGrid.Columns>
+                <!-- Ekipman No ve Adı -->
+                <DataGridTextColumn Header="Parça / Ekipman Adı" Binding="{Binding EkipmanAdi}" Width="2.5*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="5"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <!-- Bildirim Tarihi -->
+                <DataGridTextColumn Header="Arıza Tarihi" Binding="{Binding BildirimTarihi, StringFormat=dd.MM.yyyy HH:mm}" Width="1.5*"/>
+
+                <!-- Çözüm Tarihi -->
+                <DataGridTextColumn Header="Giderildiği Tarih" Binding="{Binding CozumTarihi, StringFormat=dd.MM.yyyy HH:mm}" Width="1.5*"/>
+
+                <!-- Toplam Süre -->
+                <DataGridTextColumn Header="Toplam Arıza Süresi" Binding="{Binding ToplamSure}" Width="2*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="#DC2626"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>
