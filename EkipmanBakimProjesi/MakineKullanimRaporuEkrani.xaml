@@ -18,11 +18,35 @@
                 <TextBlock Text="Bitis:" VerticalAlignment="Center" FontWeight="Bold" Margin="15,0,5,0"/>
                 <DatePicker x:Name="DpBitis" Width="130" SelectedDateChanged="Filtre_Changed"/>
 
-                <Button Content="📅 Bu Ay" Click="BtnBuAy_Click" Margin="15,0,5,0" Padding="10,5" Background="#E2E8F0" BorderThickness="0"/>
-                <Button Content="🔄 Tüm Zamanlar" Click="BtnTumZamanlar_Click" Margin="5,0,20,0" Padding="10,5" Background="#E2E8F0" BorderThickness="0"/>
+                <Button Content="📅 Bu Ay" Click="BtnBuAy_Click" Margin="15,0,5,0" Padding="10,5" Background="#E2E8F0" BorderThickness="0">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+                <Button Content="🔄 Tüm Zamanlar" Click="BtnTumZamanlar_Click" Margin="5,0,20,0" Padding="10,5" Background="#E2E8F0" BorderThickness="0">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
 
-                <Button Content="📊 Excel Raporu Çıkart" Click="BtnExcel_Click" Background="#10B981" Foreground="White" FontWeight="Bold" Padding="15,7" BorderThickness="0" Margin="0,0,10,0"/>
-                <Button Content="📑 PDF Raporu Çıkart" Click="BtnPdf_Click" Background="#EF4444" Foreground="White" FontWeight="Bold" Padding="15,7" BorderThickness="0"/>
+                <Button Content="📊 Excel Raporu Çıkart" Click="BtnExcel_Click" Background="#10B981" Foreground="White" FontWeight="Bold" Padding="15,7" BorderThickness="0" Margin="0,0,10,0">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+                <Button Content="📑 PDF Raporu Çıkart" Click="BtnPdf_Click" Background="#EF4444" Foreground="White" FontWeight="Bold" Padding="15,7" BorderThickness="0">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
             </StackPanel>
         </Border>
 

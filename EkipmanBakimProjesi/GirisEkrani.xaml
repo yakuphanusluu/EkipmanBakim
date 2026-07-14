@@ -13,7 +13,13 @@
             <TextBlock Text="Şifre:" FontWeight="Bold" Margin="0,0,0,5"/>
             <PasswordBox x:Name="TxtPass" Padding="5" Margin="0,0,0,15"/>
 
-            <Button x:Name="BtnDbGetir" Content="Veritabanlarını Getir" Padding="8" Click="BtnDbGetir_Click" Background="#FF0078D7" Foreground="White" Margin="0,0,0,20"/>
+            <Button x:Name="BtnDbGetir" Content="Veritabanlarını Getir" Padding="8" Click="BtnDbGetir_Click" Background="#FF0078D7" Foreground="White" Margin="0,0,0,20">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
 
             <TextBlock Text="Veritabanı Seç:" FontWeight="Bold" Margin="0,0,0,5"/>
             <ComboBox x:Name="CmbVeritabanlari" Padding="5" Margin="0,0,0,15" SelectionChanged="CmbVeritabanlari_SelectionChanged"/>
@@ -21,7 +27,13 @@
             <TextBlock Text="Tablo Seç:" FontWeight="Bold" Margin="0,0,0,5"/>
             <ComboBox x:Name="CmbTablolar" Padding="5" Margin="0,0,0,25"/>
 
-            <Button x:Name="BtnBaslat" Content="Uygulamayı Başlat" Padding="10" Click="BtnBaslat_Click" Background="#FF107C10" Foreground="White" FontWeight="Bold" FontSize="14"/>
+            <Button x:Name="BtnBaslat" Content="Uygulamayı Başlat" Padding="10" Click="BtnBaslat_Click" Background="#FF107C10" Foreground="White" FontWeight="Bold" FontSize="14">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
         </StackPanel>
     </Grid>
 </Window>

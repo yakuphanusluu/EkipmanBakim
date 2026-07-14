@@ -11,18 +11,35 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,20">
-            <Button x:Name="BtnGeri" Content="⬅ Geri" Width="75" Padding="8" Margin="0,0,20,0" Click="BtnGeri_Click" 
-                    Background="#FF5C5C5C" Foreground="White" FontWeight="Bold" Cursor="Hand" ToolTip="Giriş Ekranına Dön"/>
+            <Button x:Name="BtnGeri" Content="⬅ Geri" Width="75" Padding="8" Margin="0,0,20,0" Click="BtnGeri_Click" Background="#FF5C5C5C" Foreground="White" FontWeight="Bold" Cursor="Hand" ToolTip="Giriş Ekranına Dön">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
             <TextBlock Text="Ekipman Seç:" VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="SemiBold" FontSize="14"/>
             <ComboBox x:Name="CmbEkipmanlar" Width="220" Margin="0,0,25,0" Padding="5"/>
             <TextBlock Text="Başlangıç:" VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="SemiBold" FontSize="14"/>
             <DatePicker x:Name="DpBaslangic" Width="130" Margin="0,0,20,0"/>
             <TextBlock Text="Bitiş:" VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="SemiBold" FontSize="14"/>
             <DatePicker x:Name="DpBitis" Width="130" Margin="0,0,15,0"/>
-            <Button x:Name="BtnTarihiTemizle" Content="Temizle" Width="70" Padding="8" Margin="0,0,10,0" Click="BtnTarihiTemizle_Click" 
-                    Background="#FF757575" Foreground="White" FontWeight="Bold" Cursor="Hand"/>
-            <Button x:Name="BtnFiltrele" Content="Kayıtları Getir" Width="120" Padding="8" Click="BtnFiltrele_Click" 
-                    Background="#FF0078D7" Foreground="White" FontWeight="Bold" Cursor="Hand"/>
+            
+            <Button x:Name="BtnTarihiTemizle" Content="Temizle" Width="70" Padding="8" Margin="0,0,10,0" Click="BtnTarihiTemizle_Click" Background="#FF757575" Foreground="White" FontWeight="Bold" Cursor="Hand">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+            
+            <Button x:Name="BtnFiltrele" Content="Kayıtları Getir" Width="120" Padding="8" Click="BtnFiltrele_Click" Background="#FF0078D7" Foreground="White" FontWeight="Bold" Cursor="Hand">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
         </StackPanel>
 
         <DataGrid Grid.Row="1" x:Name="DgKayitlar" AutoGenerateColumns="False" IsReadOnly="True" 
@@ -80,20 +97,88 @@
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10">
-                <Button Content="Arıza Geçmişi" Click="BtnArizaGecmisi_Click" Background="#475569" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
+                <Button Content="Arıza Geçmişi" Click="BtnArizaGecmisi_Click" Background="#475569" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="5"/>
+                        </Style>
+                    </Button.Resources>
+                    </Button>
 
-                <Button Content="Arıza Bildir" Click="BtnArizaBildir_Click" Background="#DC2626" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
-                <Button Content="Ürün/Parça Talep" Click="BtnUrunTalep_Click" Background="#06B6D4" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
-                <Button Content="Geçmiş Bakımlar" Click="BtnGecmis_Click" Background="#374151" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
-                <Button Content="Bakım Takip Tablosu" Click="BtnTakip_Click" Background="#F59E0B" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
-                <Button Content="Bakım Yönetimi" Click="BtnBakim_Click" Background="#10B981" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
-                <Button Content="Grafik Göster" Click="BtnGrafik_Click" Background="#8B5CF6" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
+                    <Button Content="Arıza Bildir" Click="BtnArizaBildir_Click" Background="#DC2626" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+                <Button Content="Ürün/Parça Talep" Click="BtnUrunTalep_Click" Background="#06B6D4" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+                <Button Content="Geçmiş Bakımlar" Click="BtnGecmis_Click" Background="#374151" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+                <Button Content="Bakım Takip Tablosu" Click="BtnTakip_Click" Background="#F59E0B" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+                <Button Content="Bakım Yönetimi" Click="BtnBakim_Click" Background="#10B981" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+                <Button Content="Grafik Göster" Click="BtnGrafik_Click" Background="#8B5CF6" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
             </StackPanel>
 
             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="Makine Kullanım Raporu" Click="BtnUtilization_Click" Background="#3B82F6" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
-                <Button Content="Excel'e Aktar" Click="BtnExcel_Click" Background="#059669" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
-                <Button Content="Rapor Çıkart (PDF)" Click="BtnPdf_Click" Background="#DC2626" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5"/>
+                <Button Content="Makine Kullanım Raporu" Click="BtnUtilization_Click" Background="#3B82F6" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+                <Button Content="📊 Excel'e Aktar" Click="BtnExcel_Click" Background="#059669" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+                <Button Content="📄 Rapor Çıkart (PDF)" Click="BtnPdf_Click" Background="#DC2626" Foreground="White" FontWeight="Bold" Padding="15,10" Margin="5">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
             </StackPanel>
         </Grid>
     </Grid>

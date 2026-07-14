@@ -35,7 +35,13 @@
                     <DatePicker x:Name="DpBitis" Width="130" Height="30" SelectedDateChanged="Filtre_Changed"/>
                 </StackPanel>
 
-                <Button Content="Temizle" Width="80" Height="30" Background="#E74C3C" Foreground="White" FontWeight="Bold" Margin="0,15,0,0" Click="BtnTemizle_Click"/>
+                <Button Content="Temizle" Width="80" Height="30" Background="#E74C3C" Foreground="White" FontWeight="Bold" Margin="0,15,0,0" Click="BtnTemizle_Click">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
             </WrapPanel>
         </Border>
 
@@ -72,7 +78,7 @@
 
         <!-- EXCEL VE PDF BUTONLARI -->
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
-            <Button x:Name="BtnExcel" Content="Excel'e Aktar" Width="130" Height="40" Margin="0,0,15,0" 
+            <Button x:Name="BtnExcel" Content="📊 Excel'e Aktar" Width="130" Height="40" Margin="0,0,15,0" 
                     Background="#27AE60" Foreground="White" FontWeight="Bold" Cursor="Hand" Click="BtnExcel_Click">
                 <Button.Resources>
                     <Style TargetType="Border">
@@ -81,7 +87,7 @@
                 </Button.Resources>
             </Button>
 
-            <Button x:Name="BtnPdf" Content="PDF Çıkart" Width="130" Height="40" 
+            <Button x:Name="BtnPdf" Content="📄 PDF Çıkart" Width="130" Height="40" 
                     Background="#E74C3C" Foreground="White" FontWeight="Bold" Cursor="Hand" Click="BtnPdf_Click">
                 <Button.Resources>
                     <Style TargetType="Border">
